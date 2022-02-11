@@ -1,9 +1,11 @@
-const validateUniques = (data) => {
-  console.log(data);
-  return true;
-};
+import xlsx from "xlsx";
 
-const decodeXls = ({ headers, json }) => {
+const decodeXls = ({ data }) => {
+  const workbook = xlsx.read(data, { type: "array" });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const headers = xlsx.utils.sheet_to_json(worksheet, { header: 1 })[0];
+  const json = xlsx.utils.sheet_to_json(worksheet);
   let columns = headers;
   let values = {};
   let search = json.slice(0, 20);
@@ -25,7 +27,6 @@ const decodeXls = ({ headers, json }) => {
       .filter((item) => Object.values(item).includes(value))
       .map((item) => item["SKU"]);
   }
-  console.log(collection);
 
   return {
     columns,
